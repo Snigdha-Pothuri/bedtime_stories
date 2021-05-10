@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View,Flatlist } from 'react-native';
 import db from '../config';
 
 export default class ReadStory extends React.Component {
@@ -12,9 +12,17 @@ export default class ReadStory extends React.Component {
 
    retrieveStories=()=>{
      try{
-       allStories=[]
-       db.collection("stories")
-     }
+      var allStories=[]
+       db.collection("stories").get().then((snapshot)=>{
+       snapshot.forEach((doc)=>{
+       allStories.push(doc.data())
+       })
+         this.setState({
+         allStories:allStories
+         })
+       })
+     } 
+     catch (error) { console.log(error); }
    }
 
   componentDidMount= async()=>{
@@ -27,9 +35,24 @@ export default class ReadStory extends React.Component {
    }
     render() {
       return (
+        <View>
             <ScrollView>
-              
+       <FlatList
+         data={this.state.allStories}
+        renderItem={
+        ({item})=>{
+      <View>
+        <Text> Title : {item.title} </Text>
+        <Text> Author : {item.author} </Text>
+        </View>
+      } 
+        }
+   keyExtractor={
+   (item,index)=>index.toString()
+}
+        />
             </ScrollView>
+        </View>
       );
     }
   }
