@@ -1,12 +1,14 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View,Flatlist } from 'react-native';
 import db from '../config';
-
+import {SearchBar,Header} from 'react-native-elements'
 export default class ReadStory extends React.Component {
   constructor(){
     super()
     this.state={
-      allStories:[]
+      allStories:[],
+      datasource:[],
+      search:[]
     }
   }
 
@@ -24,21 +26,38 @@ export default class ReadStory extends React.Component {
      } 
      catch (error) { console.log(error); }
    }
-
-  componentDidMount= async()=>{
-    const query=db.collection("stories").get()
-    query.docs.map((doc)=>{
-       this.setState({
-         allStories:[...this.state.allStories,doc.data()]
-       })
-    })
+ 
+  componentDidMount(){
+  this.retrieveStories
    }
+updateSearch=(search)=>{
+this.setState({
+search:search
+})
+}
+searchStories(text){
+  const newData = this.state.allStories.filter((item)=>{
+  const itemData= item.title?item.title.toUpperCase():"".toUpperCase()
+  const textData=text.toUpperCase()
+  return itemData.indexOf(textData)>-1
+  })
+  this.setState({
+  dataSource:newData,
+  search:text
+  })
+}
     render() {
       return (
         <View>
+        <SearchBar
+        placeholder="Search for a story here"
+        onChangeText={text=>this.searchStories(text)}
+        onClear={text=>this.searchStories("")}
+        value={this.state.search]
+        />
             <ScrollView>
        <FlatList
-         data={this.state.allStories}
+         data={this.state.search===""?this.state.allStories:this.state.dataSource}
         renderItem={
         ({item})=>{
       <View>
