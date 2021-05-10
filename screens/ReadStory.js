@@ -44,6 +44,7 @@ export default class ReadStory extends React.Component {
       <View>
         <Text> Title : {item.title} </Text>
         <Text> Author : {item.author} </Text>
+        <Text> Story : {item.storytext} </Text>
         </View>
       } 
         }
